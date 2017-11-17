@@ -89,4 +89,22 @@ contract BlindAuction {
         return true;
     }
 
+    function withdraw () {
+        uint amount = pendingReturns[msg.sender];
+        if (amount > 0) {
+            pendingReturns[msg.sender] = 0;
+            msg.sender.transfer(amount);
+        }
+    }
+
+    function auctionEnd ()
+        onlyAfter(revealEnd)
+        {
+            require(!ended);
+            AuctionEnded(highestBidder, highestBid);
+            ended = true;
+
+            beneficiary.transfer(this.balance);
+        }
+        
 }
